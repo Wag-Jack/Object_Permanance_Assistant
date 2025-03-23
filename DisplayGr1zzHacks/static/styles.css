@@ -7,6 +7,14 @@ body {
     padding: 0;
 }
 
+.logo {
+    position: absolute; /* Position it absolutely relative to the body */
+    top: 5px; /* Adjust the distance from the top */
+    left: 5px; /* Adjust the distance from the left */
+    width: 100px; /* Set a fixed width */
+    height: auto; /* Maintain aspect ratio */
+}
+
 .container {
     width: 80%;
     margin: auto;
@@ -18,6 +26,7 @@ h1 {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
 
 .video-container {
     margin: 20px auto;
