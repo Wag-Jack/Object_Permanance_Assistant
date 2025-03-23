@@ -7,14 +7,6 @@ body {
     padding: 0;
 }
 
-.logo {
-    position: absolute; /* Position it absolutely relative to the body */
-    top: 5px; /* Adjust the distance from the top */
-    left: 5px; /* Adjust the distance from the left */
-    width: 100px; /* Set a fixed width */
-    height: auto; /* Maintain aspect ratio */
-}
-
 .container {
     width: 80%;
     margin: auto;
@@ -27,11 +19,11 @@ h1 {
     letter-spacing: 2px;
 }
 
-
-.video-container {
+/* Location Map Box */
+.map-container {
     margin: 20px auto;
     width: 70%;
-    height: 200px;
+    height: 700px;
     background-color: white;
     display: flex;
     align-items: center;
@@ -39,17 +31,51 @@ h1 {
     border: 3px solid black;
 }
 
-.video-placeholder {
+.map-placeholder {
     font-style: italic;
     font-size: 20px;
     color: black;
 }
 
-.info-container {
-    width: 60%;
+/* Video and Graph Section */
+.video-graph-section {
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
     margin: auto;
+    margin-top: 20px;
+}
+
+/* Live Video Box */
+.video-container, .heartbeat-container {
+    width: 48%;
+    height: 250px;  /* Adjusted to be equal in size */
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid black;
+}
+
+.heartbeat-container {
+    width: 48%;
+    height: 250px;
+    border: 3px solid black;
+    background-color: transparent; /* Removes white background */
+}
+
+
+.heartbeat-container canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* Info Box */
+.info-container {
+    width: 66%;
+    margin: 20px auto;
     padding: 20px;
-    background-color: rgba(0, 0, 128, 0.8);
+    background-color: rgba(0, 0, 86, 0.561);
     border: 2px solid white;
     text-align: left;
     padding-left: 20px;
