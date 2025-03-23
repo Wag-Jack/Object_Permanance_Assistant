@@ -1,0 +1,19 @@
+<launch>
+  <!-- Load robot model -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find dog_harness_device)/urdf/dog_harness_device.urdf.xacro'" />
+
+  <!-- Robot State Publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- Gazebo World -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" />
+
+  <!-- Spawn robot in Gazebo -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+        args="-param robot_description -urdf -model dog_harness" />
+
+  <!-- Load and spawn diff drive controller -->
+  <rosparam file="$(find dog_harness_device)/config/diff_drive.yaml" command="load"/>
+  <node name="controller_spawner" pkg="controller_manager" type="spawner"
+        args="diff_drive_controller joint_state_controller" />
+</launch>

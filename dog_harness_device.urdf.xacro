@@ -1,0 +1,174 @@
+<robot name="dog_harness_device">
+
+  
+  <link name="dog_base">
+    <visual>
+      <geometry><box size="0.4 0.2 0.1" /></geometry>
+      <origin xyz="0 0 0.05" />
+      <material name="Brown"><color rgba="0.6 0.3 0.1 1.0" /></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.4 0.2 0.1" /></geometry>
+      <origin xyz="0 0 0.05" />
+    </collision>
+    <inertial>
+      <mass value="5.0" />
+      <inertia ixx="0.05" ixy="0.0" ixz="0.0" iyy="0.05" iyz="0.0" izz="0.05" />
+    </inertial>
+  </link>
+
+  
+  <link name="harness_device">
+    <visual>
+      <geometry><box size="0.2 0.1 0.05" /></geometry>
+      <origin xyz="0 0 0.15" />
+      <material name="Gray"><color rgba="0.5 0.5 0.5 1.0" /></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.2 0.1 0.05" /></geometry>
+      <origin xyz="0 0 0.15" />
+    </collision>
+    <inertial>
+      <mass value="0.5" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
+    </inertial>
+  </link>
+
+  <joint name="harness_mount" type="fixed">
+    <parent link="dog_base" />
+    <child link="harness_device" />
+    <origin xyz="0 0 0" />
+  </joint>
+
+  
+  <gazebo reference="harness_device">
+    <sensor type="camera" name="forward_camera">
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>10.0</far>
+        </clip>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <cameraName>forward_camera</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>harness_device</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  
+  <gazebo reference="harness_device">
+    <sensor type="ray" name="proximity_sensor_front">
+      <ray>
+        <range>
+          <min>0.1</min>
+          <max>2.0</max>
+        </range>
+        <scan>
+          <horizontal>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>0</max_angle>
+          </horizontal>
+        </scan>
+      </ray>
+      <plugin name="proximity_plugin" filename="libgazebo_ros_range.so">
+        <topicName>proximity_front</topicName>
+        <frameName>harness_device</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+  <gazebo reference="harness_device">
+  <sensor type="ray" name="garmin_lidar_v3">
+    <pose>0 0 0.1 0 0 0</pose>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>1</samples>
+          <resolution>1</resolution>
+          <min_angle>0</min_angle>
+          <max_angle>0</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.05</min>
+        <max>40</max>
+      </range>
+    </ray>
+    <plugin name="garmin_lidar_plugin" filename="lib_range.so">
+      <topicName>/garmin_lidar</topicName>
+      <frameName>harness_device</frameName>
+    </plugin>
+  </sensor>
+</gazebo>
+
+
+<link name="left_wheel">
+  <visual>
+    <geometry><cylinder radius="0.03" length="0.02" /></geometry>
+    <origin xyz="0.15 0.1 0.02" rpy="1.5708 0 0" />
+    <material name="invisible"><color rgba="0 0 0 0" /></material>
+  </visual>
+  <inertial>
+    <mass value="0.1" />
+    <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+  </inertial>
+</link>
+
+<joint name="left_wheel_joint" type="continuous">
+  <parent link="dog_base" />
+  <child link="left_wheel" />
+  <origin xyz="0.15 0.1 0.02" />
+  <axis xyz="0 1 0" />
+</joint>
+
+
+<link name="right_wheel">
+  <visual>
+    <geometry><cylinder radius="0.03" length="0.02" /></geometry>
+    <origin xyz="0.15 -0.1 0.02" rpy="1.5708 0 0" />
+    <material name="invisible"><color rgba="0 0 0 0" /></material>
+  </visual>
+  <inertial>
+    <mass value="0.1" />
+    <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+  </inertial>
+</link>
+<joint name="right_wheel_joint" type="continuous">
+  <parent link="dog_base" />
+  <child link="right_wheel" />
+  <origin xyz="0.15 -0.1 0.02" />
+  <axis xyz="0 1 0" />
+</joint>
+<transmission name="left_wheel_trans">
+  <type>transmission_interface/SimpleTransmission</type>
+  <actuator name="left_wheel_motor">
+    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
+
+<transmission name="right_wheel_trans">
+  <type>transmission_interface/SimpleTransmission</type>
+  <actuator name="right_wheel_motor">
+    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
+
+<gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so" />
+</gazebo>
+
+
+
+</robot>
