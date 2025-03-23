@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Object Permanence Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Favicon Link -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/Logo.png') }}">
 </head>
 <body>
     <div class="container">
+
+ <!-- Logo added to the top left -->
+ <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Logo" class="logo">
+
         <h1>OBJECT PERMANENCE <br> ASSISTANT</h1>
-        
+       
+        <!-- Video Feed Container -->
         <div class="video-container">
-            <div class="video-placeholder">Live Video Feed</div>
+            <video id="live-video" width="100%" height="100%" autoplay></video>
         </div>
 
         <div class="info-container">
@@ -20,5 +27,23 @@
             <p><strong>CURRENT DISTANCE:</strong></p>
         </div>
     </div>
+
+    <script>
+        // JavaScript to access the camera
+        async function startVideo() {
+            const videoElement = document.getElementById('live-video');
+            try {
+                // Request access to the camera
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                // Assign the stream to the video element
+                videoElement.srcObject = stream;
+            } catch (error) {
+                console.error("Error accessing the camera:", error);
+            }
+        }
+
+        // Start video when the page loads
+        window.onload = startVideo;
+    </script>
 </body>
 </html>
