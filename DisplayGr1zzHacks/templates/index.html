@@ -5,22 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Object Permanence Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <!-- Favicon Link -->
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/Logo.png') }}">
 </head>
 <body>
     <div class="container">
-
- <!-- Logo added to the top left -->
- <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Logo" class="logo">
-
         <h1>OBJECT PERMANENCE <br> ASSISTANT</h1>
-       
-        <!-- Video Feed Container -->
-        <div class="video-container">
-            <video id="live-video" width="100%" height="100%" autoplay></video>
+        
+        <!-- Location Map Box -->
+        <div class="map-container">
+            <div class="map-placeholder">Location Map</div>
         </div>
 
+        <!-- Live Video and Heartbeat Graph Side by Side -->
+        <div class="video-graph-section">
+            <div class="video-container">
+                <video id="live-video" width="100%" height="100%" autoplay></video>
+            </div>
+
+            <div class="heartbeat-container">
+                <canvas id="heartbeatCanvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Info Box -->
         <div class="info-container">
             <p><strong>ROOM SIZE:</strong></p>
             <p><strong>TIME:</strong></p>
@@ -33,17 +39,100 @@
         async function startVideo() {
             const videoElement = document.getElementById('live-video');
             try {
-                // Request access to the camera
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                // Assign the stream to the video element
                 videoElement.srcObject = stream;
             } catch (error) {
                 console.error("Error accessing the camera:", error);
             }
         }
 
-        // Start video when the page loads
         window.onload = startVideo;
+
+        // Custom Heartbeat Graph with Axes
+        const canvas = document.getElementById("heartbeatCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas size dynamically
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = 250;
+
+        let time = 0;
+        let dataPoints = [];
+
+        function drawHeartbeat() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Background color matching page theme
+            ctx.fillStyle = "#000020";  
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw axes
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1;
+            
+            // Y-Axis (Heartbeat BPM)
+            ctx.beginPath();
+            ctx.moveTo(50, 10);
+            ctx.lineTo(50, canvas.height - 30);
+            ctx.stroke();
+
+            // X-Axis (Time)
+            ctx.beginPath();
+            ctx.moveTo(50, canvas.height - 30);
+            ctx.lineTo(canvas.width - 10, canvas.height - 30);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = "white";
+            ctx.font = "12px Arial";
+            
+            // Y-Axis Labels (120 - 150 BPM)
+            for (let bpm = 120; bpm <= 150; bpm += 10) {
+                let y = canvas.height - 30 - (bpm - 120) * 5;
+                ctx.fillText(bpm, 10, y);
+                ctx.beginPath();
+                ctx.moveTo(45, y);
+                ctx.lineTo(50, y);
+                ctx.stroke();
+            }
+
+            // X-Axis Labels (Time)
+            for (let t = 0; t <= 20; t += 5) {
+                let x = 50 + (t * (canvas.width - 60) / 20);
+                ctx.fillText(t + "s", x, canvas.height - 10);
+                ctx.beginPath();
+                ctx.moveTo(x, canvas.height - 30);
+                ctx.lineTo(x, canvas.height - 25);
+                ctx.stroke();
+            }
+
+            // Draw heartbeat line
+            ctx.beginPath();
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 2;
+            
+            let step = (canvas.width - 60) / 20;
+            ctx.moveTo(50, canvas.height - 30 - (dataPoints[0] - 120) * 5);
+
+            for (let i = 1; i < dataPoints.length; i++) {
+                let x = 50 + i * step;
+                let y = canvas.height - 30 - (dataPoints[i] - 120) * 5;
+                ctx.lineTo(x, y);
+            }
+
+            ctx.stroke();
+
+            // Update data
+            if (dataPoints.length > 20) {
+                dataPoints.shift();
+            }
+
+            dataPoints.push(120 + Math.random() * 30); // Generate random heartbeat (120-150 bpm)
+
+            setTimeout(drawHeartbeat, 1000);
+        }
+
+        drawHeartbeat();
     </script>
 </body>
 </html>
